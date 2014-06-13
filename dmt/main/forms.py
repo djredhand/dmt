@@ -35,8 +35,15 @@ class MilestoneUpdateForm(ModelForm):
 
 
 class ItemUpdateForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ItemUpdateForm, self).__init__(*args, **kwargs)
+        item = kwargs['instance']
+        milestone = item.milestone
+        project_id = milestone.project.pk
+        self.fields['milestone'].queryset = Milestone.objects.filter(project=project_id)
+
     class Meta:
         model = Item
-        exclude = ['iid', 'milestone', 'owner',
+        exclude = ['iid', 'owner',
                    'assigned_to', 'status', 'r_status', 'last_mod',
                    'tags', 'priority']
